@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+
+<dom-module id="gobandgo-listbox-submenu">
+
+  <template>
+    <style>
+      :host {
+        
+      }
+      
+    </style>
+    
+    <slot name="menu-trigger">
+    </slot>
+
+    <slot>
+    </slot>
+
+  </template>
+
+  <script>
+    class ListboxSubmenu extends Polymer.LazyImportsMixin(Polymer.Element) {
+      static get is() {
+        return 'gobandgo-listbox-submenu';
+      }
+
+      static get properties() {
+        return {
+          page: String,
+          route: Object
+        }
+      }
+    }
+
+    window.customElements.define(ListboxSubmenu.is, ListboxSubmenu);
+  </script>
+</dom-module>

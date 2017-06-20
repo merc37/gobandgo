@@ -1,0 +1,6 @@
+{
+  "name": "gobandgo",
+  "short_name": "gobandgo",
+  "start_url": "/",
+  "display": "standalone"
+}

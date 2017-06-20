@@ -1,0 +1,32 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="gobandgo-garagesale-page">
+
+    <template>
+        <style>
+
+        </style>
+
+
+
+    </template>
+
+    <script>
+        class GarageSale extends Polymer.Element {
+            static get is() {
+                return 'gobandgo-garagesale-page';
+            }
+
+            static get properties() {
+                return {
+                    page: String,
+                    route: Object
+                }
+            }
+        }
+
+        window.customElements.define(GarageSale.is, GarageSale);
+    </script>
+</dom-module>

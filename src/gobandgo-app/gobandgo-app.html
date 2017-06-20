@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
@@ -24,11 +25,11 @@
 <dom-module id="gobandgo-app">
 
   <link rel="lazy-import" href="../gobandgo-home-page/gobandgo-home-page.html" group="home-page">
-  <link rel="lazy-import" href="../gobandgo-garage-sale-page/gobandgo-garage-sale-page.html" group="garage-sale-page">
+  <link rel="lazy-import" href="../gobandgo-garagesale-page/gobandgo-garagesale-page.html" group="garage-sale-page">
 
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
 
@@ -41,7 +42,7 @@
         display: none;
       }
 
-      app-drawer-layout:not([narrow]) #drawer-title {
+      app-drawer-layout:not([narrow]) [main-title] {
         display: none;
       }
 
@@ -54,7 +55,7 @@
         @apply --layout-horizontal;
       }
 
-      #drawer-title {
+      #drawer-toolbar-title {
         @apply --layout-flex;
         text-align: center;
       }
@@ -66,7 +67,7 @@
       .page-selector {
         @apply --layout-flex;
       }
-      
+
       .page {
         @apply --layout-flex;
       }
@@ -81,28 +82,33 @@
     <app-drawer-layout fullbleed>
 
       <app-drawer slot="drawer">
-        <app-toolbar class="toolbar">
-          <div id="drawer-title">GoBandGo</div>
-        </app-toolbar>
+        <app-header-layout>
+          <app-header effects="waterfall">
+            <app-toolbar id="drawer-toolbar" class="toolbar">
+              <div id="drawer-toolbar-title">GoBandGo</div>
+            </app-toolbar>
+          </app-header>
 
-        <paper-listbox id="main-navigation" selected="[[page]]" attr-for-selected="name" role="navigator">
-          <a href="/home" class="page-selector">
-            <paper-icon-item name="home" class="page-selector">
-              <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
-              Home
-            </paper-icon-item>
-          </a>
+          <paper-listbox id="main-navigation" selected="[[page]]" attr-for-selected="name" role="navigator">
+            <a href="/home" class="page-selector">
+              <paper-icon-item name="home" class="page-selector">
+                <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
+                Home
+              </paper-icon-item>
+            </a>
 
-          <gobandgo-listbox-submenu>
-            <div slot="main-trigger">
-            </div>
-          </gobandgo-listbox-submenu>
-        </paper-listbox>
+            <gobandgo-listbox-submenu>
+              <div slot="main-trigger">
+                Helllo
+              </div>
+            </gobandgo-listbox-submenu>
+          </paper-listbox>
+        </app-header-layout>
       </app-drawer>
 
-      <app-header-layout fullbleed>
-        <app-header slot="header">
-          <app-toolbar class="toolbar">
+      <app-header-layout fullbleed has-scrolling-region>
+        <app-header slot="header" effects="waterfall">
+          <app-toolbar id="header-toolbar" class="toolbar">
             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
             <div main-title spacer>GoBandGo</div>
           </app-toolbar>
@@ -138,17 +144,17 @@
       }
 
       handleRoutePathChange(newPage, oldPage) {
-        if(newPage === undefined) {
+        if (newPage === undefined) {
           return;
         }
         newPage = newPage.split('/')[1];
 
-        if(this.page == newPage) {
+        if (this.page == newPage) {
           return;
         }
 
         const page = newPage || 'home';
-        this.importLazyGroup(page+'-page').then((results) => {
+        this.importLazyGroup(page + '-page').then((results) => {
           //console.log(results);
           this.page = page;
         });

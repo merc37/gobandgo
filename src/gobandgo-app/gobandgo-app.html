@@ -13,6 +13,8 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -30,6 +32,8 @@
     <style>
        :host {
         display: block;
+        --app-primary-color: #673AB7;
+        --app-secondary-color: #FFC107;
       }
 
       a {
@@ -55,7 +59,7 @@
       }
 
       .toolbar {
-        background-color: #673AB7;
+        background-color: var(--app-secondary-color);
       }
     </style>
 
@@ -66,6 +70,10 @@
     </app-route>
 
     <a href="/home" id="home-link"></a>
+    <a href="/information" id="information-link"></a>
+    <a href="/map" id="map-link"></a>
+    <a href="/printablemap" id="printablemap-link"></a>
+    <a href="/signup" id="signup-link"></a>
 
     <!--Root Layout-->
     <app-drawer-layout fullbleed>
@@ -80,22 +88,34 @@
             </app-toolbar>
           </app-header>
 
-          <paper-listbox id="main-navigation" selected="[[page]]" attr-for-selected="name" role="navigator">
+          <paper-listbox id="main-navigation" attr-for-selected="name" role="navigator">
 
-            <paper-icon-item name="home" class="page-selector">
+            <paper-icon-item name="home" class="page-selector" on-tap="onDrawerMenuTap">
               <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
               Home
             </paper-icon-item>
 
-            <gobandgo-listbox-submenu>
+            <gobandgo-listbox-submenu name="garagesale" opened="{{garageSaleMenuOpened}}">
               <paper-icon-item slot="menu-trigger">
-                <iron-icon icon="icons:expand-more" slot="item-icon"></iron-icon>
+                <iron-icon icon="{{expandIcon}}" slot="item-icon"></iron-icon>
                 Garage Sale
               </paper-icon-item>
-              <paper-listbox slot="menu-content">
-                <paper-icon-item>
-                  <iron-icon icon="icons:info" slot="item-icon"></iron-icon>
+              <paper-listbox slot="menu-content" attr-for-selected="name">
+                <paper-icon-item name="information" on-tap="onDrawerMenuTap">
+                  <iron-icon icon="icons:info-outline" slot="item-icon"></iron-icon>
                   Information
+                </paper-icon-item>
+                <paper-icon-item name="map" on-tap="onDrawerMenuTap">
+                  <iron-icon icon="maps:map" slot="item-icon"></iron-icon>
+                  Map
+                </paper-icon-item>
+                <paper-icon-item name="printablemap" on-tap="onDrawerMenuTap">
+                  <iron-icon icon="icons:print" slot="item-icon"></iron-icon>
+                  Printable Map
+                </paper-icon-item>
+                <paper-icon-item name="signup" on-tap="onDrawerMenuTap">
+                  <iron-icon icon="social:person-add" slot="item-icon"></iron-icon>
+                  Sign Up
                 </paper-icon-item>
               </paper-listbox>
             </gobandgo-listbox-submenu>
@@ -128,6 +148,7 @@
 
   <script>
     class GobandgoApp extends Polymer.LazyImportsMixin(Polymer.Element) {
+
       static get is() {
         return 'gobandgo-app';
       }
@@ -135,13 +156,19 @@
       static get properties() {
         return {
           page: String,
-          route: Object
+          route: Object,
+          garageSaleMenuOpened: Boolean,//FIXME: make sure it cant propagate downward
+          expandIcon: {
+            type: String,
+            value: 'icons:expand-more'
+          }
         }
       }
 
       static get observers() {
         return [
-          'handleRoutePathChange(route.path)'
+          'handleRoutePathChange(route.path)',
+          'handleGarageSaleMenuOpenedChanged(garageSaleMenuOpened)'
         ]
       }
 
@@ -160,6 +187,20 @@
           //console.log(results);
           this.page = page;
         });
+      }
+
+      handleGarageSaleMenuOpenedChanged(newVal, oldVal) {
+        if(newVal) {
+          this.expandIcon = 'icons:expand-less';
+        } else {
+          this.expandIcon = 'icons:expand-more';
+        }
+      }
+
+      onDrawerMenuTap(evt) {
+        //console.log(evt.target.attributes.getNamedItem('name').value);
+        const page = evt.target.attributes.getNamedItem('name').value;
+        this.$[page+'-link'].click();
       }
     }
 

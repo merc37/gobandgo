@@ -32,8 +32,8 @@
     <style>
        :host {
         display: block;
-        --app-primary-color: #673AB7;
-        --app-secondary-color: #FFC107;
+        --app-primary-color: #663399;
+        --app-secondary-color: #D4AF37;
       }
 
       a {
@@ -63,10 +63,10 @@
       }
     </style>
 
-    <app-location route="{{route}}">
+    <app-location route="{{_route}}">
     </app-location>
 
-    <app-route route="{{route}}" pattern="/:page">
+    <app-route route="{{_route}}" pattern="/:page">
     </app-route>
 
     <a href="/home" id="home-link"></a>
@@ -88,32 +88,32 @@
             </app-toolbar>
           </app-header>
 
-          <paper-listbox id="main-navigation" attr-for-selected="name" role="navigator">
+          <paper-listbox id="main-navigation" selected="[[_page]]" attr-for-selected="name" role="navigator">
 
-            <paper-icon-item name="home" class="page-selector" on-tap="onDrawerMenuTap">
+            <paper-icon-item name="home" class="page-selector" on-tap="_onDrawerMenuTap">
               <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
               Home
             </paper-icon-item>
 
-            <gobandgo-listbox-submenu name="garagesale" opened="{{garageSaleMenuOpened}}">
-              <paper-icon-item slot="menu-trigger">
-                <iron-icon icon="{{expandIcon}}" slot="item-icon"></iron-icon>
+            <gobandgo-listbox-submenu name="garagesale">
+              <paper-icon-item class="trigger" slot="menu-trigger">
+                <iron-icon icon="" slot="item-icon"></iron-icon>
                 Garage Sale
               </paper-icon-item>
-              <paper-listbox slot="menu-content" attr-for-selected="name">
-                <paper-icon-item name="information" on-tap="onDrawerMenuTap">
+              <paper-listbox slot="menu-content" selected="[[_page]]" attr-for-selected="name">
+                <paper-icon-item name="information" on-tap="_onDrawerMenuTap">
                   <iron-icon icon="icons:info-outline" slot="item-icon"></iron-icon>
                   Information
                 </paper-icon-item>
-                <paper-icon-item name="map" on-tap="onDrawerMenuTap">
+                <paper-icon-item name="map" on-tap="_onDrawerMenuTap">
                   <iron-icon icon="maps:map" slot="item-icon"></iron-icon>
                   Map
                 </paper-icon-item>
-                <paper-icon-item name="printablemap" on-tap="onDrawerMenuTap">
+                <paper-icon-item name="printablemap" on-tap="_onDrawerMenuTap">
                   <iron-icon icon="icons:print" slot="item-icon"></iron-icon>
                   Printable Map
                 </paper-icon-item>
-                <paper-icon-item name="signup" on-tap="onDrawerMenuTap">
+                <paper-icon-item name="signup" on-tap="_onDrawerMenuTap">
                   <iron-icon icon="social:person-add" slot="item-icon"></iron-icon>
                   Sign Up
                 </paper-icon-item>
@@ -136,7 +136,7 @@
         </app-header>
 
         <!--Main Content-->
-        <iron-pages id="main-pages" selected="[[page]]" attr-for-selected="name" role="main">
+        <iron-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
           <gobandgo-home-page name="home" class="page"></gobandgo-home-page>
         </iron-pages>
 
@@ -155,52 +155,40 @@
 
       static get properties() {
         return {
-          page: String,
-          route: Object,
-          garageSaleMenuOpened: Boolean,//FIXME: make sure it cant propagate downward
-          expandIcon: {
-            type: String,
-            value: 'icons:expand-more'
-          }
+          _page: String,
+          _route: Object
         }
       }
 
       static get observers() {
         return [
-          'handleRoutePathChange(route.path)',
-          'handleGarageSaleMenuOpenedChanged(garageSaleMenuOpened)'
+          '_handleRoutePathChange(route.path)'
         ]
       }
 
-      handleRoutePathChange(newPage, oldPage) {
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      _handleRoutePathChange(newPage, oldPage) {
         if (newPage === undefined) {
           return;
         }
         newPage = newPage.split('/')[1];
 
-        if (this.page == newPage) {
+        if (this._page == newPage) {
           return;
         }
 
         const page = newPage || 'home';
         this.importLazyGroup(page + '-page').then((results) => {
-          //console.log(results);
-          this.page = page;
+          this._page = page;
         });
       }
 
-      handleGarageSaleMenuOpenedChanged(newVal, oldVal) {
-        if(newVal) {
-          this.expandIcon = 'icons:expand-less';
-        } else {
-          this.expandIcon = 'icons:expand-more';
-        }
-      }
-
-      onDrawerMenuTap(evt) {
-        //console.log(evt.target.attributes.getNamedItem('name').value);
+      _onDrawerMenuTap(evt) {
         const page = evt.target.attributes.getNamedItem('name').value;
-        this.$[page+'-link'].click();
+        this.$[page + '-link'].click();
       }
     }
 

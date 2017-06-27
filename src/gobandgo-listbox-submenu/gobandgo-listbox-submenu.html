@@ -3,22 +3,23 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
-
 <dom-module id="gobandgo-listbox-submenu">
 
   <template>
     <style>
-      ::slotted(paper-listbox){
+       :host(.iron-selected) ::slotted([slot="menu-trigger"]) {
+        font-weight: bold;
+      }
+
+       :host(.iron-selected) ::slotted([slot="menu-content"]) {
         padding-left: 100px;
       }
     </style>
 
-    <slot name="menu-trigger" on-tap="onMenuTap">
+    <slot name="menu-trigger" on-tap="_onMenuTap">
     </slot>
 
-    <iron-collapse opened="{{opened}}">
+    <iron-collapse opened="[[_opened]]">
       <slot name="menu-content">
       </slot>
     </iron-collapse>
@@ -33,17 +34,15 @@
 
       static get properties() {
         return {
-          opened: {
+          _opened: {
             type: Boolean,
-            value: false,
-            notify: true,
-            reflectToAttribute: true
+            value: false
           }
         }
       }
 
-      onMenuTap(e) {
-        this.opened = !this.opened;
+      _onMenuTap(evt) {
+        this._opened = !this._opened;
       }
     }
 

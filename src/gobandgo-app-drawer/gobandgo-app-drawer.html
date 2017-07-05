@@ -19,60 +19,62 @@
         @apply --layout-flex;
         text-align: center;
       }
+
       #drawer-toolbar {
         background-color: var(--app-secondary-color);
       }
-      .submenu-item{
+
+      .submenu-item {
         padding-left: 32px;
       }
     </style>
 
     <app-header-layout has-scrolling-region>
-        <app-header slot="header" fixed shadow>
-          <app-toolbar id="drawer-toolbar">
-            <div id="drawer-toolbar-title">♫GoBandGo♫</div>
-          </app-toolbar>
-        </app-header>
+      <app-header slot="header" fixed shadow>
+        <app-toolbar id="drawer-toolbar">
+          <div id="drawer-toolbar-title">♫GoBandGo♫</div>
+        </app-toolbar>
+      </app-header>
 
-        <paper-listbox id="main-navigation" attr-for-selected="name" role="navigator">
+      <paper-listbox id="main-navigation" attr-for-selected="name" role="navigator">
 
-          <paper-icon-item name="home" on-tap="_onDrawerMenuTap">
-            <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
-            Home
-          </paper-icon-item>
+        <paper-icon-item name="home" on-tap="_onDrawerMenuTap" selected="[[page]]">
+          <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
+          Home
+        </paper-icon-item>
 
-          <paper-icon-item id="submenu-trigger" on-tap="_onSubMenuTap" name="garagesale">
-            <iron-icon icon="{{_expandIcon}}" slot="item-icon"></iron-icon>
-            Garage Sale
-          </paper-icon-item>
-          <iron-collapse opened="{{_opened}}">
-            <paper-listbox id="menu-content" attr-for-selected="name">
-              <paper-icon-item class="submenu-item" name="garagesale-information" on-tap="_onDrawerMenuTap">
-                <iron-icon icon="icons:info-outline" slot="item-icon"></iron-icon>
-                Information
-              </paper-icon-item>
-              <paper-icon-item class="submenu-item" name="garagesale-map" on-tap="_onDrawerMenuTap">
-                <iron-icon icon="maps:map" slot="item-icon"></iron-icon>
-                Map
-              </paper-icon-item>
-              <paper-icon-item class="submenu-item" name="garagesale-printablemap" on-tap="_onDrawerMenuTap">
-                <iron-icon icon="icons:print" slot="item-icon"></iron-icon>
-                Printable Map
-              </paper-icon-item>
-              <paper-icon-item class="submenu-item" name="garagesale-signup" on-tap="_onDrawerMenuTap">
-                <iron-icon icon="social:person-add" slot="item-icon"></iron-icon>
-                Sign Up
-              </paper-icon-item>
-            </paper-listbox>
-          </iron-collapse>
+        <paper-icon-item id="submenu-trigger" on-tap="_onSubMenuTap" name="garagesale">
+          <iron-icon icon="[[_expandIcon]]" slot="item-icon"></iron-icon>
+          Garage Sale
+        </paper-icon-item>
+        <iron-collapse opened="{{_opened}}">
+          <paper-listbox id="menu-content" attr-for-selected="name">
+            <paper-icon-item class="submenu-item" name="garagesale-information" on-tap="_onDrawerMenuTap" selected="[[page]]">
+              <iron-icon icon="icons:info-outline" slot="item-icon"></iron-icon>
+              Information
+            </paper-icon-item>
+            <paper-icon-item class="submenu-item" name="garagesale-map" on-tap="_onDrawerMenuTap" selected="[[page]]">
+              <iron-icon icon="maps:map" slot="item-icon"></iron-icon>
+              Map
+            </paper-icon-item>
+            <paper-icon-item class="submenu-item" name="garagesale-printablemap" on-tap="_onDrawerMenuTap" selected="[[page]]">
+              <iron-icon icon="icons:print" slot="item-icon"></iron-icon>
+              Printable Map
+            </paper-icon-item>
+            <paper-icon-item class="submenu-item" name="garagesale-signup" on-tap="_onDrawerMenuTap" selected="[[page]]">
+              <iron-icon icon="social:person-add" slot="item-icon"></iron-icon>
+              Sign Up
+            </paper-icon-item>
+          </paper-listbox>
+        </iron-collapse>
 
-          <paper-icon-item name="downloads" on-tap="_onDrawerMenuTap">
-            <iron-icon icon="icons:file-download" slot="item-icon"></iron-icon>
-            Downloads
-          </paper-icon-item>
+        <paper-icon-item name="downloads" on-tap="_onDrawerMenuTap">
+          <iron-icon icon="icons:file-download" slot="item-icon"></iron-icon>
+          Downloads
+        </paper-icon-item>
 
-        </paper-listbox>
-      </app-header-layout>
+      </paper-listbox>
+    </app-header-layout>
 
 
   </template>
@@ -101,7 +103,7 @@
 
       _onSubMenuTap(evt) {
         this._opened = !this._opened;
-        if(this._opened) {
+        if (this._opened) {
           this._expandIcon = 'expand-more';
         } else {
           this._expandIcon = 'expand-less';
@@ -110,11 +112,17 @@
 
       _onDrawerMenuTap(evt) {
         const page = evt.target.attributes.getNamedItem('name').value;
-        if(evt.target.className != 'submenu-item' && this._opened) {
+        if (evt.target.className != 'submenu-item' && this._opened) {
           this._opened = false;
         }
 
-        this.dispatchEvent(new CustomEvent('drawer-menu-tap', {detail: {page: page}, bubbles: true, composed: true}));
+        this.dispatchEvent(new CustomEvent('drawer-menu-tap', {
+          detail: {
+            page: page
+          },
+          bubbles: true,
+          composed: true
+        }));
 
       }
     }

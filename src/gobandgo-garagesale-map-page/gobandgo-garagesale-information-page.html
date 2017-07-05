@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<<<<<<< HEAD:src/gobandgo-garagesale-map-page/gobandgo-garagesale-information-page.html
 
 <dom-module id="gobandgo-garagesale-page">
 
@@ -26,6 +27,52 @@
                 }
             }
         }
+=======
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+<dom-module id="gobandgo-listbox-submenu">
+
+  <template>
+    <style>
+       :host(.iron-selected) ::slotted([slot="menu-trigger"]) {
+        font-weight: bold;
+      }
+
+       :host(.iron-selected) ::slotted([slot="menu-content"]) {
+        padding-left: 100px;
+      }
+    </style>
+
+    <slot name="menu-trigger" on-tap="_onMenuTap">
+    </slot>
+
+    <iron-collapse opened="[[_opened]]">
+      <slot name="menu-content">
+      </slot>
+    </iron-collapse>
+
+  </template>
+
+  <script>
+    class ListboxSubmenu extends Polymer.Element {
+      static get is() {
+        return 'gobandgo-listbox-submenu';
+      }
+
+      static get properties() {
+        return {
+          _opened: {
+            type: Boolean,
+            value: false
+          }
+        }
+      }
+
+      _onMenuTap(evt) {
+        this._opened = !this._opened;
+      }
+    }
+>>>>>>> master:src/gobandgo-listbox-submenu/gobandgo-listbox-submenu.html
 
         window.customElements.define(GarageSale.is, GarageSale);
     </script>

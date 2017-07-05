@@ -13,7 +13,8 @@
     "iron-icon": "PolymerElements/iron-icon#^2.0.0",
     "lazy-imports": "Polymer/lazy-imports#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "iron-collapse": "PolymerElements/iron-collapse#^2.0.0"
+    "iron-collapse": "PolymerElements/iron-collapse#^2.0.0",
+    "polymerfire": "firebase/polymerfire#^2.1.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

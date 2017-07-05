@@ -37,8 +37,8 @@
     <style>
        :host {
         display: block;
-        --app-primary-color: #673AB7;
-        --app-secondary-color: #FFC107;
+        --app-primary-color: #663399;
+        --app-secondary-color: #D4AF37;
       }
 
       a {
@@ -77,8 +77,52 @@
       <!--Drawer-->
       <app-drawer slot="drawer">
 
+<<<<<<< HEAD
         <gobandgo-app-drawer page="[[_page]]" on-drawer-menu-tap="_onDrawerMenuTap">
         </gobandgo-app-drawer>
+=======
+        <app-header-layout has-scrolling-region>
+          <app-header slot="header" fixed>
+            <app-toolbar id="drawer-toolbar" class="toolbar">
+              <div id="drawer-toolbar-title">GoBandGo</div>
+            </app-toolbar>
+          </app-header>
+
+          <paper-listbox id="main-navigation" selected="[[_page]]" attr-for-selected="name" role="navigator">
+
+            <paper-icon-item name="home" class="page-selector" on-tap="_onDrawerMenuTap">
+              <iron-icon icon="icons:home" slot="item-icon"></iron-icon>
+              Home
+            </paper-icon-item>
+
+            <gobandgo-listbox-submenu name="garagesale">
+              <paper-icon-item class="trigger" slot="menu-trigger">
+                <iron-icon icon="" slot="item-icon"></iron-icon>
+                Garage Sale
+              </paper-icon-item>
+              <paper-listbox slot="menu-content" selected="[[_page]]" attr-for-selected="name">
+                <paper-icon-item name="information" on-tap="_onDrawerMenuTap">
+                  <iron-icon icon="icons:info-outline" slot="item-icon"></iron-icon>
+                  Information
+                </paper-icon-item>
+                <paper-icon-item name="map" on-tap="_onDrawerMenuTap">
+                  <iron-icon icon="maps:map" slot="item-icon"></iron-icon>
+                  Map
+                </paper-icon-item>
+                <paper-icon-item name="printablemap" on-tap="_onDrawerMenuTap">
+                  <iron-icon icon="icons:print" slot="item-icon"></iron-icon>
+                  Printable Map
+                </paper-icon-item>
+                <paper-icon-item name="signup" on-tap="_onDrawerMenuTap">
+                  <iron-icon icon="social:person-add" slot="item-icon"></iron-icon>
+                  Sign Up
+                </paper-icon-item>
+              </paper-listbox>
+            </gobandgo-listbox-submenu>
+
+          </paper-listbox>
+        </app-header-layout>
+>>>>>>> master
 
       </app-drawer>
 
@@ -119,30 +163,45 @@
 
       static get observers() {
         return [
+<<<<<<< HEAD
           '_handleRoutePathChange(_route.path)'
         ]
       }
 
+=======
+          '_handleRoutePathChange(route.path)'
+        ]
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+>>>>>>> master
       _handleRoutePathChange(newPage, oldPage) {
         if (newPage === undefined) {
           return;
         }
         newPage = newPage.split('/')[1];
 
-        if (this.page == newPage) {
+        if (this._page == newPage) {
           return;
         }
 
         const page = newPage || 'home';
         this.importLazyGroup(page + '-page').then((results) => {
-          //console.log(results);
-          this.page = page;
+          this._page = page;
         });
       }
 
       _onDrawerMenuTap(evt) {
+<<<<<<< HEAD
         const page = evt.detail.page;
         this.$[page+'-link'].click();
+=======
+        const page = evt.target.attributes.getNamedItem('name').value;
+        this.$[page + '-link'].click();
+>>>>>>> master
       }
     }
 

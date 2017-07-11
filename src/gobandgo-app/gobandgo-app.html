@@ -1,37 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/lazy-imports/lazy-imports-mixin.html">
 
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
-
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
-
-<link rel="import" href="../gobandgo-app-drawer/gobandgo-app-drawer.html">
+<link rel="import" href="../gobandgo-loader/gobandgo-loader.html">
+<link rel="import" href="../gobandgo-animated-pages/gobandgo-animated-pages.html">
 
 <dom-module id="gobandgo-app">
 
-  <link rel="lazy-import" href="../gobandgo-home-page/gobandgo-home-page.html" group="home-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-information-page/gobandgo-garagesale-information-page.html" group="garagesale-information-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-map-page/gobandgo-garagesale-map-page.html" group="garagesale-map-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-printablemap-page/gobandgo-garagesale-printablemap-page.html" group="garagesale-printablemap-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-signup-page/gobandgo-garagesale-signup-page.html" group="garagesale-signup-page">
-  <link rel="lazy-import" href="../gobandgo-downloads-page/gobandgo-downloads-page.html" group="downloads-page">
-
+  <link rel="lazy-import" href="../gobandgo-stage/gobandgo-stage.html" group="stage">
+  <link rel="lazy-import" href="../../bower_components/polymerfire/polymerfire.html" group="firebase">
+  <link rel="lazy-import" href="../../bower_components/iron-ajax/iron-ajax.html" group="iron-ajax">
+  <link rel="lazy-import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html" group="localstorage">
 
   <template>
     <style>
@@ -39,67 +19,56 @@
         display: block;
         --app-primary-color: #663399;
         --app-secondary-color: #D4AF37;
+        @apply --layout-vertical;
       }
 
-      a {
-        display: none;
+      #pages {
+        @apply --layout-flex;
+        @apply --layout-vertical;
       }
 
-      app-drawer-layout:not([narrow]) [drawer-toggle] {
-        display: none;
+      .page {
+        @apply --layout-flex;
       }
 
-      app-drawer-layout:not([narrow]) [main-title] {
-        display: none;
-      }
-
-      #header-toolbar {
-        background-color: var(--app-secondary-color);
-      }
     </style>
 
-    <app-location route="{{_route}}">
-    </app-location>
+    <app-localstorage-document
+      data="{{_language}}"
+      key="language"
+    >
+    </app-local-storage-document>
 
-    <app-route route="{{_route}}" pattern="/:page">
-    </app-route>
+    <iron-ajax
+      auto
+      url="src/resources/json/firebase-data.json"
+      handle-as="json"
+      on-response="_handleFirebaseDataResponse"
+      on-error="_handleFirebaseDataError"
+    ></iron-ajax>
 
-    <a href="/home" id="home-link"></a>
-    <a href="/information" id="information-link"></a>
-    <a href="/map" id="map-link"></a>
-    <a href="/printablemap" id="printablemap-link"></a>
-    <a href="/signup" id="signup-link"></a>
-    <a href="/downloads" id="downloads-link"></a>
+    <iron-ajax
+      id="language-ajax"
+      auto
+      handle-as="json"
+      on-response="_handleLanguageDataResponse"
+      on-error="_handleLanguageDataError"
+    ></iron-ajax>
 
-    <!--Root Layout-->
-    <app-drawer-layout fullbleed>
+    <firebase-app
+      id="firebase-app"
+      name="[[_firebaseAppName]]"
+    ></firebase-app>
 
-      <!--Drawer-->
-      <app-drawer slot="drawer">
+    <firebase-auth
+      id="auth"
+      app-name="[[_firebaseAppName]]"
+    ></firebase-auth>
 
-        <gobandgo-app-drawer page="[[_page]]" on-drawer-menu-tap="_onDrawerMenuTap">
-        </gobandgo-app-drawer>
-
-      </app-drawer>
-
-      <!--Header Layout-->
-      <app-header-layout fullbleed has-scrolling-region>
-
-        <app-header fixed shadow slot="header">
-          <app-toolbar id="header-toolbar">
-            <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
-            <div main-title spacer>♫GoBandGo♫</div>
-          </app-toolbar>
-        </app-header>
-
-        <!--Main Content-->
-        <iron-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
-          <gobandgo-home-page name="home" class="page"></gobandgo-home-page>
-        </iron-pages>
-
-      </app-header-layout>
-
-    </app-drawer-layout>
+    <gobandgo-animated-pages id="pages" selected="[[_page]]" attr-for-selected="name">
+      <gobandgo-stage name="stage" class="page" locale="[[_locale]]" on-language-change="_onLanguageChange"></gobandgo-stage>
+      <gobandgo-loader name="loader" class="page" exit-animation="slide-up"></gobandgo-loader>
+    </gobandgo-animated-pages>
 
   </template>
 
@@ -112,36 +81,93 @@
 
       static get properties() {
         return {
-          _page: String,
-          _route: Object
+          _page: {
+            type: String,
+            value: 'loader'
+          },
+          _firebaseAppName: {
+            type: String,
+            value: 'gobandgo-firebase',
+            readOnly: true
+          },
+          _language: {
+            type: String,
+            value: ''
+          },
+          _locale: Object
         }
       }
 
       static get observers() {
         return [
-          '_handleRoutePathChange(_route.path)'
+          '_updateLocale(_language)'
         ]
       }
 
-      _handleRoutePathChange(newPage, oldPage) {
-        if (newPage === undefined) {
-          return;
-        }
-        newPage = newPage.split('/')[1];
-
-        if (this._page == newPage) {
-          return;
-        }
-
-        const page = newPage || 'home';
-        this.importLazyGroup(page + '-page').then((results) => {
-          this._page = page;
+      ready() {
+        super.ready();
+        this.importLazyGroup('iron-ajax');
+        this.importLazyGroup('localstorage').then(() => {
+          if(!this._language) {
+            this._language = 'en';
+          }
         });
       }
 
-      _onDrawerMenuTap(evt) {
-        const page = evt.detail.page;
-        this.$[page + '-link'].click();
+      _onLanguageChange(evt) {
+        const newLang = evt.detail.language;
+        this._language = newLang;
+      }
+
+      _updateLocale(newLang, oldLang) {
+
+        if(!newLang) {
+          return;
+        }
+
+        if(newLang == oldLang) {
+          return;
+        }
+
+        this.$['language-ajax'].url = 'src/resources/json/'+newLang+'.json';
+
+      }
+
+      _handleSignIn() {
+        this.$.auth.signInAnonymously()
+        .then(() => {
+          this._loadStage();
+        });
+      }
+
+      _loadStage() {
+        this.importLazyGroup('stage')
+          .then(() => {
+            this._page = 'stage';
+          });
+      }
+
+      _handleFirebaseDataResponse(evt) {
+        this.$['firebase-app'].apiKey = evt.detail.response.apiKey;
+        this.$['firebase-app'].authDomain = evt.detail.response.authDomain;
+        this.$['firebase-app'].databaseUrl = evt.detail.response.databaseURL;
+
+        this.importLazyGroup('firebase')
+          .then(() => {
+            this._handleSignIn();
+          });
+      }
+
+      _handleLanguageDataResponse(evt) {
+        this._locale = evt.detail.response;
+      }
+
+      _handleFirebaseDataError(evt) {
+        console.error(evt.detail.response);
+      }
+
+      _handleLanguageDataError(evt) {
+        console.error(evt.detail.response);
       }
     }
 

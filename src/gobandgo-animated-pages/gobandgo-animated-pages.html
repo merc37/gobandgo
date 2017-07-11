@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selectable.html">
+
+<link rel="import" href="../gobandgo-animations/gobandgo-animations.html">
+
+<dom-module id="gobandgo-animated-pages">
+    <template>
+        <style>
+            :host > ::slotted(*) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+
+            :host > ::slotted(:not(.iron-selected):not(.gobandgo-animating)) {
+                display: none !important;
+            }
+
+            :host > ::slotted(.gobandgo-animating) {
+                pointer-events: none;
+            }
+        </style>
+        
+        <slot></slot>
+
+    </template>
+
+    <script>
+        class GobandgoAnimatedPages extends Polymer.mixinBehaviors([Polymer.IronSelectableBehavior], Polymer.Element) {
+            static get is() {
+                return 'gobandgo-animated-pages';
+            }
+
+            static get properties() {
+                return {
+                    animateInitial: {
+                        type: Boolean,
+                        value: false
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+                this.addEventListener('iron-select', this._onIronSelect);
+            }
+
+            _onIronSelect(evt) {
+                const selectedPage = evt.detail.item;
+                
+                if (this.items.indexOf(selectedPage) < 0) {
+                    return;
+                }
+
+                const oldPage = this._valueToItem(this._prevSelected) || null;
+                this._prevSelected = this.selected;
+
+                if(!oldPage && !this.animateInitial) {
+                    return;
+                }
+
+                if(oldPage) {
+                    const animationType = oldPage.getAttribute('exit-animation');
+                    if(animationType) {
+                        const animation = createAnimation(oldPage, animationType);
+                        animation.onfinish = () => {
+                            this._completeAnimation(oldPage, selectedPage);
+                        };
+                        oldPage.classList.add('gobandgo-animating');
+                        animation.play();
+                    }
+                }
+
+                if(selectedPage) {
+                    const animationType = selectedPage.getAttribute('entry-animation');
+                    if(animationType) {
+                        const animation = createAnimation(selectedPage, animationType);
+                        animation.onfinish = () => {
+                            this._completeAnimation(oldPage, selectedPage);
+                        };
+                        selectedPage.classList.add('gobandgo-animating');
+                        animation.play();
+                    }
+                }
+
+
+            }
+
+            _completeAnimation(oldPage, selectedPage) {
+                if(oldPage) {
+                    oldPage.classList.remove('gobandgo-animating');
+                }
+                if(selectedPage) {
+                    selectedPage.classList.remove('gobandgo-animating');
+                }
+            }
+        }
+
+        window.customElements.define(GobandgoAnimatedPages.is, GobandgoAnimatedPages);
+    </script>
+</dom-module>

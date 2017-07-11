@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<dom-module id="gobandgo-loading-page">
+
+    <template>
+        <style>
+            :host {
+                @apply --layout-vertical;
+            }
+            #content {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            #spinner {
+                --paper-spinner-layer-1-color: var(--app-primary-color);
+                --paper-spinner-layer-2-color: var(--app-secondary-color);
+                --paper-spinner-layer-3-color: var(--app-primary-color);
+                --paper-spinner-layer-4-color: var(--app-secondary-color);
+            }
+        </style>
+
+        <div id="content">
+            <paper-spinner id="spinner" active class="thick">
+            </paper-spinner>
+        </div>
+
+    </template>
+
+    <script>
+        class GobandgoLoadingPage extends Polymer.Element {
+            static get is() {
+                return 'gobandgo-loading-page';
+            }
+        }
+
+        window.customElements.define(GobandgoLoadingPage.is, GobandgoLoadingPage);
+    </script>
+</dom-module>

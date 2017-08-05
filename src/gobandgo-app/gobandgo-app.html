@@ -9,17 +9,18 @@
 <dom-module id="gobandgo-app">
 
   <link rel="lazy-import" href="../gobandgo-stage/gobandgo-stage.html" group="stage">
-  <link rel="lazy-import" href="../../bower_components/polymerfire/polymerfire.html" group="firebase">
+  <link rel="lazy-import" href="../../bower_components/polymerfire/firebase-app.html" group="firebase">
+  <link rel="lazy-import" href="../../bower_components/polymerfire/firebase-auth.html" group="firebase">
   <link rel="lazy-import" href="../../bower_components/iron-ajax/iron-ajax.html" group="iron-ajax">
   <link rel="lazy-import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html" group="localstorage">
 
   <template>
     <style>
        :host {
-        display: block;
         --app-primary-color: #663399;
         --app-secondary-color: #D4AF37;
         @apply --layout-vertical;
+        @apply --layout-flex;
       }
 
       #pages {
@@ -37,7 +38,7 @@
       data="{{_language}}"
       key="language"
     >
-    </app-local-storage-document>
+    </app-localstorage-document>
 
     <iron-ajax
       auto
@@ -66,7 +67,7 @@
     ></firebase-auth>
 
     <gobandgo-animated-pages id="pages" selected="[[_page]]" attr-for-selected="name">
-      <gobandgo-stage name="stage" class="page" locale="[[_locale]]" on-language-change="_onLanguageChange"></gobandgo-stage>
+      <gobandgo-stage name="stage" class="page" language="[[_language]]" locale="[[_locale]]" firebase-app-name="[[_firebaseAppName]]" on-language-change="_onLanguageChange"></gobandgo-stage>
       <gobandgo-loader name="loader" class="page" exit-animation="slide-up"></gobandgo-loader>
     </gobandgo-animated-pages>
 
@@ -151,6 +152,7 @@
         this.$['firebase-app'].apiKey = evt.detail.response.apiKey;
         this.$['firebase-app'].authDomain = evt.detail.response.authDomain;
         this.$['firebase-app'].databaseUrl = evt.detail.response.databaseURL;
+        this.$['firebase-app'].storageBucket = evt.detail.response.storageBucket;
 
         this.importLazyGroup('firebase')
           .then(() => {

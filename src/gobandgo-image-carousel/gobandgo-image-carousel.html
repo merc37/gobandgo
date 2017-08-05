@@ -1,0 +1,128 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selectable.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../gobandgo-animations/gobandgo-animations.html">
+
+<dom-module id="gobandgo-image-carousel">
+    <template>
+        <style>
+            :host {
+                position: relative;
+            }
+
+            :host > ::slotted(*) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+
+            :host > ::slotted(:not(.iron-selected):not(.gobandgo-animating)) {
+                display: none !important;
+            }
+
+            :host > ::slotted(.gobandgo-animating) {
+                pointer-events: none;
+            }
+
+            paper-fab {
+                --paper-fab-background: var(--app-primary-color);
+            }
+
+            #left-fab {
+                
+            }
+        </style>
+        
+        <slot></slot>
+
+        <paper-fab id="left-fab" icon="icons:chevron-left" on-tap="_onLeftTap"></paper-fab>
+        <paper-fab id="right-fab" icon="icons:chevron-right" on-tap="_onRightTap"></paper-fab>
+
+    </template>
+
+    <script>
+        class GobandgoImageCarousel extends Polymer.mixinBehaviors([Polymer.IronSelectableBehavior], Polymer.Element) {
+            static get is() {
+                return 'gobandgo-image-carousel';
+            }
+
+            static get properties() {
+                return {
+
+                };
+            }
+
+            ready() {
+                super.ready();
+                this.selected = '0';
+                this.addEventListener('iron-select', this._onIronSelect);
+            }
+
+            _onLeftTap(evt) {
+                let currSelected = parseInt(this.selected);
+                this._prevSelected = currSelected;
+                this._direction = 'left';
+                this._otherDirection = 'right';
+                currSelected -= 1;
+                if(currSelected < 0) {
+                    currSelected = this.items.length - 1;
+                }
+                this.selected = currSelected.toString();
+            }
+
+            _onRightTap(evt) {
+                let currSelected = parseInt(this.selected);
+                this._prevSelected = currSelected;
+                this._direction = 'right';
+                this._otherDirection = 'left';
+                currSelected += 1;
+                if(currSelected > (this.items.length - 1)) {
+                    currSelected = 0;
+                }
+                this.selected = currSelected.toString();
+            }
+
+            _onIronSelect(evt) {
+                if(this._prevSelected === undefined) {
+                    return;
+                }
+
+                const newImage = evt.detail.item;
+                const oldImage = this._valueToItem(this._prevSelected);
+
+                // const newAnimation = createAnimation(newImage, 'slide-from-'+this._direction);
+                // newAnimation.onfinish = () => {
+                //     this._completeAnimation(newImage, oldImage);
+                // };
+                // newImage.classList.add('gobandgo-animating');
+                // oldImage.classList.add('gobandgo-animating');
+                // newAnimation.play();
+
+                const oldAnimation = createAnimation(oldImage, 'slide-'+this._otherDirection, {delay: 0});
+                oldAnimation.onfinish = () => {
+                    this._completeAnimation(newImage, oldImage);
+                };
+                oldImage.classList.add('gobandgo-animating');
+                oldAnimation.play();
+            }
+
+            _completeAnimation(oldPage, selectedPage) {
+                if(oldPage) {
+                    oldPage.classList.remove('gobandgo-animating');
+                }
+                if(selectedPage) {
+                    selectedPage.classList.remove('gobandgo-animating');
+                }
+            }
+        }
+
+        window.customElements.define(GobandgoImageCarousel.is, GobandgoImageCarousel);
+    </script>
+</dom-module>

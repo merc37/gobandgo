@@ -1,32 +1,132 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/lazy-imports/lazy-imports-mixin.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
-<dom-module id="gobandgo-garagesale-page">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<dom-module id="gobandgo-garagesale-map-page">
+
+    <link rel="lazy-import" href="../../bower_components/google-map/google-map.html" group="google-map">
 
     <template>
         <style>
 
+            :host {
+                @apply --layout-vertical;
+            }
+
+            #map {
+                @apply --layout-flex;
+            }
+
+            #info-window-content {
+                 @apply --layout-vertical;
+             }
+
+             #info-window-image {
+                @apply --layout-flex;
+             }
+
+             #info-window-address {
+                @apply --layout-flex;
+             }
+
+             #info-window-message {
+                @apply --layout-flex;
+             }
+
+            #spinner {
+                 position: absolute;
+                 --paper-spinner-color: var(--app-primary-color)
+             }
+
         </style>
 
+        <iron-ajax
+            auto
+            url="src/resources/json/google-api-data.json"
+            handle-as="json"
+            on-response="_handleGoogleApiDataResponse"
+            on-error="_handleGoogleApiDataError"
+        ></iron-ajax>
 
+        <firebase-query
+            app-name="[[firebaseAppName]]"
+            path="/markers"
+            order-by-child="paid"
+            equal-to="[[_equalTo]]"
+            data="{{_markerData}}"
+        ></firebase-query>
+
+        <google-map id="map" api-key="[[_apiKey]]" latitude="40.876211" longitude="-74.029862" fit-to-markers
+            on-google-map-ready="_handleMapReady" language="[[language]]">
+            <template is="dom-repeat" items="{{_markerData}}">
+                <google-map-marker slot="markers" latitude="[[item.latitude]]" longitude="[[item.longitude]]"
+                    title="[[item.address]]" click-events on-google-map-marker-click="_handleMarkerClick" data="[[item]]">         
+                </google-map-marker>
+            </template>
+        </google-map>
+
+        <paper-spinner-lite id="spinner" active="[[!_mapReady]]"></paper-spinner-lite>
 
     </template>
 
     <script>
-        class GarageSale extends Polymer.Element {
+        class GobandgoGarageSaleMapPage extends Polymer.LazyImportsMixin(Polymer.Element) {
             static get is() {
-                return 'gobandgo-garagesale-page';
+                return 'gobandgo-garagesale-map-page';
             }
 
             static get properties() {
                 return {
-                    page: String,
-                    route: Object
+                    language: String,
+                    firebaseAppName: String,
+                    _markerData: Array,
+                    _equalTo: {
+                        type: String,
+                        value: 'true'
+                    },
+                    _apiKey: String,
+                    _mapReady: {
+                        type: Boolean,
+                        value: false
+                    }
                 }
+            }
+
+            _handleMarkerClick(evt) {
+                const marker = evt.target;
+                this._infoWindow = this._infoWindow || new google.maps.InfoWindow({
+                    maxWidth: 300
+                });
+                this._infoWindow.setContent(
+                    '<div id="info-window-content">'+
+                        '<img id="info-window-image" src="' + marker.data.downloadURL+'"></img>' +
+                        '<div id="info-window-address">' + marker.data.address + '</div>' +
+                        '<div id="info-window-message">' + marker.data.message + '</div>' +
+                    '</div>'
+                );
+                this._infoWindow.open(marker.map, marker.marker);
+            }
+
+            _handleMapReady(evt) {
+                this._mapReady = true;
+            }
+
+            _handleGoogleApiDataResponse(evt) {
+                this._apiKey = evt.detail.response.apiKey;
+                this.importLazyGroup('google-map');
+            }
+
+            _handleGoogleApiDataError(evt) {
+                console.error(evt.detail.response);
             }
         }
 
-        window.customElements.define(GarageSale.is, GarageSale);
+        window.customElements.define(GobandgoGarageSaleMapPage.is, GobandgoGarageSaleMapPage);
     </script>
 </dom-module>

@@ -143,16 +143,21 @@
         'slide-right': slideRight,
         'slide-left': slideLeft,
         'slide-from-bottom': slideFromBottom,
-        'slide-from-top': slideFromBottom,
-        'slide-from-left': slideFromBottom,
-        'slide-from-right': slideFromBottom
+        'slide-from-top': slideFromTop,
+        'slide-from-left': slideFromLeft,
+        'slide-from-right': slideFromRight
     };
 
-    const createAnimation = (element, animationType) => {
+    const createAnimation = (element, animationType, options) => {
         const anim = animationTypes[animationType];
         if(!anim) {
             console.log(new Error('Animation Type not found'));
             return;
+        }
+        if(options) {
+            Object.keys(options).forEach((option) => {
+                anim.options[option] = options[option];
+            });
         }
         const animation = element.animate(anim.animation, anim.options);
         animation.pause();

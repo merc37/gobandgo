@@ -21,6 +21,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 
 <link rel="import" href="../gobandgo-stage-drawer/gobandgo-stage-drawer.html">
 <link rel="import" href="../gobandgo-loading-page/gobandgo-loading-page.html">
@@ -82,10 +83,10 @@
     </app-route>
 
     <a href="/home" id="home-link"></a>
-    <a href="/information" id="garagesale-information-link"></a>
-    <a href="/map" id="garagesale-map-link"></a>
-    <a href="/printablemap" id="garagesale-printablemap-link"></a>
-    <a href="/signup" id="garagesale-signup-link"></a>
+    <a href="/garagesale-information" id="garagesale-information-link"></a>
+    <a href="/garagesale-map" id="garagesale-map-link"></a>
+    <a href="/garagesale-printablemap" id="garagesale-printablemap-link"></a>
+    <a href="/garagesale-signup" id="garagesale-signup-link"></a>
     <a href="/downloads" id="downloads-link"></a>
 
     <!--Root Layout-->
@@ -106,10 +107,9 @@
           <app-toolbar id="header-toolbar">
             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
             <div main-title spacer><div id="main-title">♫GoBandGo♫</div></div>
-            <!--FIXME: Add animations to button-->
-            <paper-menu-button no-animations horizontal-align="right">
+            <paper-menu-button horizontal-align="right">
               <paper-icon-button icon="icons:more-vert" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" attr-for-selected="name">
+              <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="[[language]]">
                 <paper-item name="en" on-tap="_onLanguageSelect">English</paper-item>
                 <paper-item name="es" on-tap="_onLanguageSelect">Spanish</paper-item>
               </paper-listbox>
@@ -120,6 +120,7 @@
         <!--Main Content-->
         <gobandgo-animated-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
           <gobandgo-home-page name="home" class="page"></gobandgo-home-page>
+          <gobandgo-garagesale-map-page name="garagesale-map" class="page" language="[[language]]" firebase-app-name="[[firebaseAppName]]"></gobandgo-garagesale-map-page>
 
           <gobandgo-loading-page name="loading" class="page"></gobandgo-loading-page>
         </gobandgo-animated-pages>
@@ -141,7 +142,9 @@
         return {
           _page: String,
           _route: Object,
-          locale: Object
+          locale: Object,
+          language: String,
+          firebaseAppName: String
         }
       }
 

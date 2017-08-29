@@ -3,12 +3,12 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
-<link rel="import" href="../gobandgo-loader/gobandgo-loader.html">
-<link rel="import" href="../gobandgo-animated-pages/gobandgo-animated-pages.html">
+<link rel="import" href="../gbg-loader/gbg-loader.html">
+<link rel="import" href="../gbg-animated-pages/gbg-animated-pages.html">
 
-<dom-module id="gobandgo-app">
+<dom-module id="gbg-app">
 
-  <link rel="lazy-import" href="../gobandgo-stage/gobandgo-stage.html" group="stage">
+  <link rel="lazy-import" href="../gbg-stage/gbg-stage.html" group="stage">
   <link rel="lazy-import" href="../../bower_components/polymerfire/firebase-app.html" group="firebase">
   <link rel="lazy-import" href="../../bower_components/polymerfire/firebase-auth.html" group="firebase">
   <link rel="lazy-import" href="../../bower_components/iron-ajax/iron-ajax.html" group="iron-ajax">
@@ -44,18 +44,18 @@
 
     <firebase-auth id="auth"></firebase-auth>
 
-    <gobandgo-animated-pages id="pages" selected="[[_page]]" attr-for-selected="name">
-      <gobandgo-stage name="stage" class="page" language="[[_language]]" locale="[[_locale]]" on-language-change="_onLanguageChange"></gobandgo-stage>
-      <gobandgo-loader name="loader" class="page" exit-animation="slide-up"></gobandgo-loader>
-    </gobandgo-animated-pages>
+    <gbg-animated-pages id="pages" selected="[[_page]]" attr-for-selected="name">
+      <gbg-stage name="stage" class="page" language="[[_language]]" locale="[[_locale]]" on-language-change="_onLanguageChange"></gbg-stage>
+      <gbg-loader name="loader" class="page" exit-animation="slide-up"></gbg-loader>
+    </gbg-animated-pages>
 
   </template>
 
   <script>
-    class GobandgoApp extends Polymer.LazyImportsMixin(Polymer.Element) {
+    class GBGApp extends Polymer.LazyImportsMixin(Polymer.Element) {
 
       static get is() {
-        return 'gobandgo-app';
+        return 'gbg-app';
       }
 
       static get properties() {
@@ -146,6 +146,6 @@
       }
     }
 
-    window.customElements.define(GobandgoApp.is, GobandgoApp);
+    window.customElements.define(GBGApp.is, GBGApp);
   </script>
 </dom-module>

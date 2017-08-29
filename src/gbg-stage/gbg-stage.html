@@ -23,19 +23,19 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 
-<link rel="import" href="../gobandgo-stage-drawer/gobandgo-stage-drawer.html">
-<link rel="import" href="../gobandgo-loading-page/gobandgo-loading-page.html">
+<link rel="import" href="../gbg-stage-drawer/gbg-stage-drawer.html">
+<link rel="import" href="../gbg-loading-page/gbg-loading-page.html">
 
-<link rel="import" href="../gobandgo-animated-pages/gobandgo-animated-pages.html">
+<link rel="import" href="../gbg-animated-pages/gbg-animated-pages.html">
 
-<dom-module id="gobandgo-stage">
+<dom-module id="gbg-stage">
 
-  <link rel="lazy-import" href="../gobandgo-home-page/gobandgo-home-page.html" group="home-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-information-page/gobandgo-garagesale-information-page.html" group="garagesale-information-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-map-page/gobandgo-garagesale-map-page.html" group="garagesale-map-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-printablemap-page/gobandgo-garagesale-printablemap-page.html" group="garagesale-printablemap-page">
-  <link rel="lazy-import" href="../gobandgo-garagesale-signup-page/gobandgo-garagesale-signup-page.html" group="garagesale-signup-page">
-  <link rel="lazy-import" href="../gobandgo-downloads-page/gobandgo-downloads-page.html" group="downloads-page">
+  <link rel="lazy-import" href="../gbg-home-page/gbg-home-page.html" group="home-page">
+  <link rel="lazy-import" href="../gbg-garagesale-information-page/gbg-garagesale-information-page.html" group="garagesale-information-page">
+  <link rel="lazy-import" href="../gbg-garagesale-map-page/gbg-garagesale-map-page.html" group="garagesale-map-page">
+  <link rel="lazy-import" href="../gbg-garagesale-printablemap-page/gbg-garagesale-printablemap-page.html" group="garagesale-printablemap-page">
+  <link rel="lazy-import" href="../gbg-garagesale-signup-page/gbg-garagesale-signup-page.html" group="garagesale-signup-page">
+  <link rel="lazy-import" href="../gbg-downloads-page/gbg-downloads-page.html" group="downloads-page">
 
   <template>
     <style>
@@ -94,8 +94,8 @@
       <!--Drawer-->
       <app-drawer id="drawer" slot="drawer">
 
-        <gobandgo-stage-drawer locale="[[locale]]" page="[[_page]]" on-drawer-menu-tap="_onDrawerMenuTap">
-        </gobandgo-stage-drawer>
+        <gbg-stage-drawer locale="[[locale]]" page="[[_page]]" on-drawer-menu-tap="_onDrawerMenuTap">
+        </gbg-stage-drawer>
 
       </app-drawer>
 
@@ -119,13 +119,13 @@
         </app-header>
 
         <!--Main Content-->
-        <gobandgo-animated-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
-          <gobandgo-home-page name="home" class="page"></gobandgo-home-page>
-          <gobandgo-garagesale-map-page name="garagesale-map" class="page" language="[[language]]"></gobandgo-garagesale-map-page>
-          <gobandgo-garagesale-signup-page name="garagesale-signup" class="page"></gobandgo-garagesale-signup-page>
+        <gbg-animated-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
+          <gbg-home-page name="home" class="page"></gbg-home-page>
+          <gbg-garagesale-map-page name="garagesale-map" class="page" language="[[language]]"></gbg-garagesale-map-page>
+          <gbg-garagesale-signup-page name="garagesale-signup" class="page"></gbg-garagesale-signup-page>
 
-          <gobandgo-loading-page name="loading" class="page"></gobandgo-loading-page>
-        </gobandgo-animated-pages>
+          <gbg-loading-page name="loading" class="page"></gbg-loading-page>
+        </gbg-animated-pages>
 
       </app-header-layout>
 
@@ -134,10 +134,10 @@
   </template>
 
   <script>
-    class GobandgoStage extends Polymer.LazyImportsMixin(Polymer.Element) {
+    class GBGStage extends Polymer.LazyImportsMixin(Polymer.Element) {
 
       static get is() {
-        return 'gobandgo-stage';
+        return 'gbg-stage';
       }
 
       static get properties() {
@@ -193,6 +193,6 @@
       }
     }
 
-    window.customElements.define(GobandgoStage.is, GobandgoStage);
+    window.customElements.define(GBGStage.is, GBGStage);
   </script>
 </dom-module>

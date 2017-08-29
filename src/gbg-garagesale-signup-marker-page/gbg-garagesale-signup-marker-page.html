@@ -18,7 +18,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-database-script.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-storage-script.html">
 
-<dom-module id="gobandgo-garagesale-signup-marker-page">
+<dom-module id="gbg-garagesale-signup-marker-page">
 
     <template>
         <style>
@@ -74,9 +74,9 @@
     </template>
 
     <script>
-        class GobandgoGarageSaleSignUpMarkerPage extends Polymer.Element {
+        class GBGGarageSaleSignUpMarkerPage extends Polymer.Element {
             static get is() {
-                return 'gobandgo-garagesale-signup-marker-page';
+                return 'gbg-garagesale-signup-marker-page';
             }
 
             static get properties() {
@@ -137,6 +137,7 @@
                     marker.message = marker.message || "Garage-Sale-like Items For Sale";
                     marker.downloadUrl =
                         'https://firebasestorage.googleapis.com/v0/b/gobandgo-1344.appspot.com/o/default%2FgarageSaleSign.png?alt=media&token=e83d55e2-6e35-4d92-9b0c-60f0f7e9d6c8';
+                    marker.paid = true;
 
                     const firebaseDatabase = firebase.database();
                     console.log(firebaseDatabase);
@@ -185,6 +186,6 @@
             }
         }
 
-        window.customElements.define(GobandgoGarageSaleSignUpMarkerPage.is, GobandgoGarageSaleSignUpMarkerPage);
+        window.customElements.define(GBGGarageSaleSignUpMarkerPage.is, GBGGarageSaleSignUpMarkerPage);
     </script>
 </dom-module>

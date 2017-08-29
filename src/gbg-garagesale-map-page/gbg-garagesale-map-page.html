@@ -8,7 +8,7 @@
 
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
-<dom-module id="gobandgo-garagesale-map-page">
+<dom-module id="gbg-garagesale-map-page">
 
     <link rel="lazy-import" href="../../bower_components/google-map/google-map.html" group="google-map">
 
@@ -48,7 +48,7 @@
 
         <firebase-query path="/markers" order-by-child="paid" equal-to="[[_equalTo]]" data="{{_markerData}}"></firebase-query>
 
-        <google-map id="map" api-key="[[_apiKey]]" latitude="40.876211" longitude="-74.029862" fit-to-markers on-google-map-ready="_handleMapReady"
+        <google-map id="map" zoom=15 api-key="[[_apiKey]]" latitude="40.876211" longitude="-74.029862" fit-to-markers on-google-map-ready="_handleMapReady"
             language="[[language]]">
             <template is="dom-repeat" items="{{_markerData}}">
                 <google-map-marker slot="markers" latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.address]]" click-events
@@ -62,9 +62,9 @@
     </template>
 
     <script>
-        class GobandgoGarageSaleMapPage extends Polymer.LazyImportsMixin(Polymer.Element) {
+        class GBGGarageSaleMapPage extends Polymer.LazyImportsMixin(Polymer.Element) {
             static get is() {
-                return 'gobandgo-garagesale-map-page';
+                return 'gbg-garagesale-map-page';
             }
 
             static get properties() {
@@ -72,8 +72,8 @@
                     language: String,
                     _markerData: Array,
                     _equalTo: {
-                        type: String,
-                        value: 'true'
+                        type: Boolean,
+                        value: true
                     },
                     _apiKey: String,
                     _mapReady: {
@@ -89,17 +89,20 @@
                     maxWidth: 300
                 });
                 this._infoWindow.setContent(
-                    '<div id="info-window-content">' +
-                    '<img id="info-window-image" src="' + marker.data.downloadURL + '"></img>' +
-                    '<div id="info-window-address">' + marker.data.address + '</div>' +
-                    '<div id="info-window-message">' + marker.data.message + '</div>' +
-                    '</div>'
+                    `
+                    <div id="info-window-content"> 
+                    <img id="info-window-image" src="${marker.data.downloadUrl}"></img> 
+                    <div id="info-window-address">${marker.data.address}</div> 
+                    <div id="info-window-message">${marker.data.message}</div> 
+                    </div>
+                    `
                 );
                 this._infoWindow.open(marker.map, marker.marker);
             }
 
             _handleMapReady(evt) {
                 this._mapReady = true;
+                console.log(this._markerData);
             }
 
             _handleGoogleApiDataResponse(evt) {
@@ -112,6 +115,6 @@
             }
         }
 
-        window.customElements.define(GobandgoGarageSaleMapPage.is, GobandgoGarageSaleMapPage);
+        window.customElements.define(GBGGarageSaleMapPage.is, GBGGarageSaleMapPage);
     </script>
 </dom-module>

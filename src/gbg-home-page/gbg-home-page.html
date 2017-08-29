@@ -1,33 +1,32 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<link rel="import" href="../gobandgo-image-carousel/gobandgo-image-carousel.html">
+<link rel="import" href="../gbg-image-carousel/gbg-image-carousel.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
-<dom-module id="gobandgo-home-page">
+<dom-module id="gbg-home-page">
     <template>
         <style>
              :host {
-                 @apply --layout-vertical;
-             }
-             
-             #carousel {
-                 @apply --layout-flex;
-                 @apply --layout-vertical;
-             }
+                @apply --layout-vertical;
+            }
 
-             .image {
-                 @apply --layout-flex;
-             }
+            #carousel {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+            }
 
-             #content {
-                 @apply --layout-flex;
-             }
+            .image {
+                @apply --layout-flex;
+            }
 
+            #content {
+                @apply --layout-flex;
+            }
         </style>
-        
-        <gobandgo-image-carousel id="carousel">
+
+        <gbg-image-carousel id="carousel">
             <!--<iron-image class="image" sizing="cover" src="http://pyreaus.com/inspired_manifestation/2013/mythical_serpents_nagas_jormungandr/pyreaus_inspired_manifestation_mythical_serpents_jormungandr_sea_full.jpg"></iron-image>
             <iron-image class="image" sizing="cover" src="http://www.word-haiku.com/uploads/5/0/2/0/5020866/7652865_orig.jpg"></iron-image>
             <iron-image class="image" sizing="cover" src="http://digitalblasphemy.com/graphics/previews/niflheim1_preview.jpg"></iron-image>
@@ -35,16 +34,16 @@
             <img class="image" src="http://digitalblasphemy.com/graphics/previews/niflheim1_preview.jpg"></img>
             <img class="image" src="http://www.word-haiku.com/uploads/5/0/2/0/5020866/7652865_orig.jpg"></img>
             <img class="image" src="http://pyreaus.com/inspired_manifestation/2013/mythical_serpents_nagas_jormungandr/pyreaus_inspired_manifestation_mythical_serpents_jormungandr_sea_full.jpg"></img>
-        </gobandgo-image-carousel>
+        </gbg-image-carousel>
 
         <div id="content"></div>
 
     </template>
 
     <script>
-        class GobandgoHomePage extends Polymer.Element {
+        class GBGHomePage extends Polymer.Element {
             static get is() {
-                return 'gobandgo-home-page';
+                return 'gbg-home-page';
             }
 
             static get properties() {
@@ -57,6 +56,6 @@
             }
         }
 
-        window.customElements.define(GobandgoHomePage.is, GobandgoHomePage);
+        window.customElements.define(GBGHomePage.is, GBGHomePage);
     </script>
 </dom-module>

@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="gbg-garagesale-signup-message-page">
+
+    <template>
+        <style>
+             :host {
+                @apply --layout-vertical;
+            }
+
+            #card-container {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+        </style>
+
+        <div id="card-container">
+            <paper-card id="card">
+                <div class="card-content">
+                    [[message]]
+                </div>
+            </paper-card>
+        </div>
+
+    </template>
+
+    <script>
+        class GBGGarageSaleSignUpMessagePage extends Polymer.Element {
+            static get is() {
+                return 'gbg-garagesale-signup-message-page';
+            }
+
+            static get properties() {
+                return {
+                    message: String
+                }
+            }
+        }
+
+        window.customElements.define(GBGGarageSaleSignUpMessagePage.is, GBGGarageSaleSignUpMessagePage);
+    </script>
+</dom-module>

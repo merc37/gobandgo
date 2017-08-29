@@ -1,4 +1,4 @@
-# \<gobandgo\>
+# \<gbg\>
 
 
 

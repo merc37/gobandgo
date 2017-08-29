@@ -16,7 +16,7 @@
 
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 
-<dom-module id="gobandgo-garagesale-signup-address-page">
+<dom-module id="gbg-garagesale-signup-address-page">
 
     <link rel="lazy-import" href="../../bower_components/google-apis/google-maps-api.html" group="google-map-api">
 
@@ -76,9 +76,9 @@
     </template>
 
     <script>
-        class GobandgoGarageSaleSignUpAddressPage extends Polymer.LazyImportsMixin(Polymer.Element) {
+        class GBGGarageSaleSignUpAddressPage extends Polymer.LazyImportsMixin(Polymer.Element) {
             static get is() {
-                return 'gobandgo-garagesale-signup-address-page';
+                return 'gbg-garagesale-signup-address-page';
             }
 
             static get properties() {
@@ -203,15 +203,15 @@
 
                             return this.$.firebase.getStoredValue('addressesAdded/' + addressKey)
                                 .then((addressKeySnapshot) => {
-                                    if (Object.keys(addressKeySnapshot).length == 0) {
-                                        return resolve();
+                                    if (addressKeySnapshot) {
+                                        this.dispatchEvent(new CustomEvent('address-exists', {
+                                            bubbles: true,
+                                            composed: true
+                                        }));
+                                        return reject();
                                     }
 
-                                    this.dispatchEvent(new CustomEvent('address-exists', {
-                                        bubbles: true,
-                                        composed: true
-                                    }));
-                                    return reject();
+                                    return resolve();
 
                                 })
                                 .catch(reject);
@@ -235,7 +235,7 @@
             }
         }
 
-        window.customElements.define(GobandgoGarageSaleSignUpAddressPage.is,
-            GobandgoGarageSaleSignUpAddressPage);
+        window.customElements.define(GBGGarageSaleSignUpAddressPage.is,
+            GBGGarageSaleSignUpAddressPage);
     </script>
 </dom-module>

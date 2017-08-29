@@ -6,16 +6,16 @@
 
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
-<link rel="import" href="../gobandgo-animations/gobandgo-animations.html">
+<link rel="import" href="../gbg-animations/gbg-animations.html">
 
-<dom-module id="gobandgo-image-carousel">
+<dom-module id="gbg-image-carousel">
     <template>
         <style>
-            :host {
+             :host {
                 position: relative;
             }
 
-            :host > ::slotted(*) {
+             :host> ::slotted(*) {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -23,11 +23,11 @@
                 right: 0;
             }
 
-            :host > ::slotted(:not(.iron-selected):not(.gobandgo-animating)) {
+             :host> ::slotted(:not(.iron-selected):not(.gbg-animating)) {
                 display: none !important;
             }
 
-            :host > ::slotted(.gobandgo-animating) {
+             :host> ::slotted(.gbg-animating) {
                 pointer-events: none;
             }
 
@@ -35,11 +35,9 @@
                 --paper-fab-background: var(--app-primary-color);
             }
 
-            #left-fab {
-                
-            }
+            #left-fab {}
         </style>
-        
+
         <slot></slot>
 
         <paper-fab id="left-fab" icon="icons:chevron-left" on-tap="_onLeftTap"></paper-fab>
@@ -48,9 +46,9 @@
     </template>
 
     <script>
-        class GobandgoImageCarousel extends Polymer.mixinBehaviors([Polymer.IronSelectableBehavior], Polymer.Element) {
+        class GBGImageCarousel extends Polymer.mixinBehaviors([Polymer.IronSelectableBehavior], Polymer.Element) {
             static get is() {
-                return 'gobandgo-image-carousel';
+                return 'gbg-image-carousel';
             }
 
             static get properties() {
@@ -71,7 +69,7 @@
                 this._direction = 'left';
                 this._otherDirection = 'right';
                 currSelected -= 1;
-                if(currSelected < 0) {
+                if (currSelected < 0) {
                     currSelected = this.items.length - 1;
                 }
                 this.selected = currSelected.toString();
@@ -83,14 +81,14 @@
                 this._direction = 'right';
                 this._otherDirection = 'left';
                 currSelected += 1;
-                if(currSelected > (this.items.length - 1)) {
+                if (currSelected > (this.items.length - 1)) {
                     currSelected = 0;
                 }
                 this.selected = currSelected.toString();
             }
 
             _onIronSelect(evt) {
-                if(this._prevSelected === undefined) {
+                if (this._prevSelected === undefined) {
                     return;
                 }
 
@@ -101,28 +99,30 @@
                 // newAnimation.onfinish = () => {
                 //     this._completeAnimation(newImage, oldImage);
                 // };
-                // newImage.classList.add('gobandgo-animating');
-                // oldImage.classList.add('gobandgo-animating');
+                // newImage.classList.add('gbg-animating');
+                // oldImage.classList.add('gbg-animating');
                 // newAnimation.play();
 
-                const oldAnimation = createAnimation(oldImage, 'slide-'+this._otherDirection, {delay: 0});
+                const oldAnimation = createAnimation(oldImage, 'slide-' + this._otherDirection, {
+                    delay: 0
+                });
                 oldAnimation.onfinish = () => {
                     this._completeAnimation(newImage, oldImage);
                 };
-                oldImage.classList.add('gobandgo-animating');
+                oldImage.classList.add('gbg-animating');
                 oldAnimation.play();
             }
 
             _completeAnimation(oldPage, selectedPage) {
-                if(oldPage) {
-                    oldPage.classList.remove('gobandgo-animating');
+                if (oldPage) {
+                    oldPage.classList.remove('gbg-animating');
                 }
-                if(selectedPage) {
-                    selectedPage.classList.remove('gobandgo-animating');
+                if (selectedPage) {
+                    selectedPage.classList.remove('gbg-animating');
                 }
             }
         }
 
-        window.customElements.define(GobandgoImageCarousel.is, GobandgoImageCarousel);
+        window.customElements.define(GBGImageCarousel.is, GBGImageCarousel);
     </script>
 </dom-module>

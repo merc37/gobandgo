@@ -4,19 +4,21 @@
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
-<dom-module id="gobandgo-loading-page">
+<dom-module id="gbg-loading-page">
 
     <template>
         <style>
-            :host {
+             :host {
                 @apply --layout-vertical;
             }
+
             #content {
                 @apply --layout-flex;
                 @apply --layout-vertical;
                 @apply --layout-center;
                 @apply --layout-center-justified;
             }
+
             #spinner {
                 --paper-spinner-layer-1-color: var(--app-primary-color);
                 --paper-spinner-layer-2-color: var(--app-secondary-color);
@@ -33,12 +35,12 @@
     </template>
 
     <script>
-        class GobandgoLoadingPage extends Polymer.Element {
+        class GBGLoadingPage extends Polymer.Element {
             static get is() {
-                return 'gobandgo-loading-page';
+                return 'gbg-loading-page';
             }
         }
 
-        window.customElements.define(GobandgoLoadingPage.is, GobandgoLoadingPage);
+        window.customElements.define(GBGLoadingPage.is, GBGLoadingPage);
     </script>
 </dom-module>

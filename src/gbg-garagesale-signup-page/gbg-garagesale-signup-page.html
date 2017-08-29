@@ -1,0 +1,84 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/lazy-imports/lazy-imports-mixin.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../gbg-animated-pages/gbg-animated-pages.html">
+
+<link rel="import" href="../gbg-garagesale-signup-address-page/gbg-garagesale-signup-address-page.html">
+
+<dom-module id="gbg-garagesale-signup-page">
+
+    <link rel="lazy-import" href="../gbg-garagesale-signup-marker-page/gbg-garagesale-signup-marker-page.html" group="marker-page">
+    <link rel="lazy-import" href="../gbg-garagesale-signup-message-page/gbg-garagesale-signup-message-page.html" group="message-page">
+
+    <template>
+        <style>
+             :host {
+                @apply --layout-vertical;
+            }
+
+            #signup-pages {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+            }
+
+            .page {
+                @apply --layout-flex;
+            }
+        </style>
+
+        <gbg-animated-pages id="signup-pages" selected="[[_page]]" attr-for-selected="name">
+            <gbg-garagesale-signup-address-page on-address-exists="_handleAddressExists" on-address-resolved="_handleAddressResolved"
+                name="address-page" class="page"></gbg-garagesale-signup-address-page>
+            <gbg-garagesale-signup-marker-page on-marker-submitted="_handleMarkerSubmitted" address-data="[[_addressData]]" name="marker-page"
+                class="page"></gbg-garagesale-signup-marker-page>
+            <gbg-garagesale-signup-message-page message="[[_finalMessage]]" name="message-page" class="page"></gbg-garagesale-signup-message-page>
+        </gbg-animated-pages>
+
+    </template>
+
+    <script>
+        class GBGGarageSaleSignUpPage extends Polymer.LazyImportsMixin(Polymer.Element) {
+            static get is() {
+                return 'gbg-garagesale-signup-page';
+            }
+
+            static get properties() {
+                return {
+                    _page: {
+                        type: String,
+                        value: 'address-page'
+                    },
+                    _addressData: Object,
+                    _finalMessage: String
+                }
+            }
+
+            _handleAddressResolved(evt) {
+                this._addressData = evt.detail;
+                this.importLazyGroup('marker-page').then(() => {
+                    this._page = 'marker-page';
+                });
+            }
+
+            _handleAddressExists(evt) {
+                this._finalMessage = 'This Address Has Already Been Entered';
+                this.importLazyGroup('message-page').then(() => {
+                    this._page = 'message-page';
+                });
+            }
+
+            _handleMarkerSubmitted(evt) {
+                console.log('hello');
+                this._finalMessage = 'Your Marker Has Been Submitted';
+                this.importLazyGroup('message-page').then(() => {
+                    this._page = 'message-page';
+                });
+            }
+
+        }
+
+        window.customElements.define(GBGGarageSaleSignUpPage.is, GBGGarageSaleSignUpPage);
+    </script>
+</dom-module>

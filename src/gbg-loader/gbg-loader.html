@@ -6,7 +6,7 @@
 
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 
-<dom-module id="gobandgo-loader">
+<dom-module id="gbg-loader">
 
   <template>
     <style>
@@ -14,18 +14,21 @@
         background-color: var(--app-primary-color);
         @apply --layout-vertical;
       }
+
       #content {
-          @apply --layout-flex;
-          @apply --layout-vertical;
-          @apply --layout-center;
-          @apply --layout-center-justified;
+        @apply --layout-flex;
+        @apply --layout-vertical;
+        @apply --layout-center;
+        @apply --layout-center-justified;
       }
+
       #title {
-          font-size: 24px;
-          text-align: center;
-          color: var(--app-secondary-color);
-          font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        color: var(--app-secondary-color);
+        font-weight: bold;
       }
+
       #progress-bar {
         --paper-progress-active-color: var(--app-secondary-color);
         --paper-progress-container-color: white;
@@ -33,24 +36,24 @@
     </style>
 
     <div id="content">
-        <div id="title">
-            <iron-image src="resources/images/logo.svg"></iron-image>
-        </div>
-        <div>
-            <paper-progress id="progress-bar" indeterminate></paper-progress>
-        </div>
+      <div id="title">
+        <iron-image src="resources/images/logo.svg"></iron-image>
+      </div>
+      <div>
+        <paper-progress id="progress-bar" indeterminate></paper-progress>
+      </div>
     </div>
 
   </template>
 
   <script>
-    class GobandgoLoader extends Polymer.LazyImportsMixin(Polymer.Element) {
+    class GBGLoader extends Polymer.LazyImportsMixin(Polymer.Element) {
 
       static get is() {
-        return 'gobandgo-loader';
+        return 'gbg-loader';
       }
     }
 
-    window.customElements.define(GobandgoLoader.is, GobandgoLoader);
+    window.customElements.define(GBGLoader.is, GBGLoader);
   </script>
 </dom-module>

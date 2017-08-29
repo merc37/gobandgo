@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="paper-file-input">
+
+    <template>
+        <style>
+            #fileInput {
+                display: none !important;
+            }
+        </style>
+
+        <paper-button raised="[[raised]]" disabled="[[disabled]]" on-tap="_tapFileInput">
+            <slot></slot>
+        </paper-button>
+
+        <input id="fileInput" type="file" accept="[[accept]]" multiple="[[multiple]]" on-change="_handleFilesChange"></input>
+
+    </template>
+
+    <script>
+        class PaperFileInput extends Polymer.Element {
+            static get is() {
+                return 'paper-file-input';
+            }
+
+            static get properties() {
+                return {
+                    raised: {
+                        type: Boolean,
+                        value: false
+                    },
+                    disabled: {
+                        type: Boolean,
+                        value: false
+                    },
+                    accept: {
+                        type: String,
+                        value: '*/*'
+                    },
+                    multiple: {
+                        type: Boolean,
+                        value: false
+                    },
+                    files: Object
+                }
+            }
+
+            _handleFilesChange(evt) {
+                this.files = this.$.fileInput.files;
+            }
+
+            _tapFileInput(evt) {
+                this.$.fileInput.click();
+            }
+        }
+
+        window.customElements.define(PaperFileInput.is, PaperFileInput);
+    </script>
+</dom-module>

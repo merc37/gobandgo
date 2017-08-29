@@ -1,0 +1,241 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/lazy-imports/lazy-imports-mixin.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+
+<link rel="import" href="../bluebird/bluebird.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+
+<dom-module id="gobandgo-garagesale-signup-address-page">
+
+    <link rel="lazy-import" href="../../bower_components/google-apis/google-maps-api.html" group="google-map-api">
+
+    <template>
+        <style>
+             :host {
+                @apply --layout-vertical;
+            }
+
+            #card-container {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+
+            #card-container[hidden] {
+                display: none !important;
+            }
+
+            #spinner {
+                position: absolute;
+                --paper-spinner-color: var(--app-primary-color)
+            }
+
+            #progress-bar {
+                --paper-progress-active-color: var(--app-secondary-color);
+                --paper-progress-container-color: white;
+                width: 100%;
+            }
+        </style>
+
+        <google-maps-api api-key="[[_apiKey]]" on-api-load="_onMapsApiLoad"></google-maps-api>
+
+        <iron-ajax auto url="resources/json/google-api-data.json" handle-as="json" on-response="_handleGoogleApiDataResponse" on-error="_handleGoogleApiDataError"></iron-ajax>
+
+        <firebase-document id="firebase"></firebase-document>
+
+        <div id="card-container" hidden="[[!_mapApiLoaded]]">
+            <paper-card id="card" heading="Enter Address:">
+                <div class="card-content">
+                    <paper-input id="addressInput" label="Bogota Address" invalid="[[_inputInvalid]]" autofocus></paper-input>
+                </div>
+                <div class="card-actions">
+                    <paper-button id="nextButton" on-tap="_handleAddressNext" disabled="[[_addressProcessing]]">Next</paper-button>
+                </div>
+                <paper-progress id="progress-bar" indeterminate disabled="[[!_addressProcessing]]"></paper-progress>
+            </paper-card>
+        </div>
+
+        <iron-a11y-keys keys="enter" on-keys-pressed="_handleAddressNext"></iron-a11y-keys>
+
+        <paper-spinner-lite id="spinner" active="[[!_mapApiLoaded]]"></paper-spinner-lite>
+
+        <paper-toast id="toast" fit-into="[[_toastFitInto]]"></paper-toast>
+
+    </template>
+
+    <script>
+        class GobandgoGarageSaleSignUpAddressPage extends Polymer.LazyImportsMixin(Polymer.Element) {
+            static get is() {
+                return 'gobandgo-garagesale-signup-address-page';
+            }
+
+            static get properties() {
+                return {
+                    _addressProcessing: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _inputInvalid: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _apiKey: String,
+                    _mapApiLoaded: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _toastFitInto: {
+                        type: Object,
+                        computed: '_computeToastFitInto()'
+                    }
+                }
+            }
+
+            _computeToastFitInto() {
+                return this;
+            }
+
+            _handleAddressNext(evt) {
+                return new Promise((resolve, reject) => {
+
+                    this._addressProcessing = true;
+                    this._inputInvalid = false;
+
+                    const geocodePromise = this._geocode(this.$.addressInput.value);
+                    const checkAddressPromise = this._checkAddress(geocodePromise);
+
+                    return Promise.all([
+                            geocodePromise,
+                            checkAddressPromise
+                        ])
+                        .spread((geocodeResult) => {
+                            this._addressProcessing = false;
+
+                            let address = geocodeResult.formatted_address;
+                            address = address.slice(0, address.indexOf(','));
+
+                            this.dispatchEvent(new CustomEvent('address-resolved', {
+                                detail: {
+                                    address: address,
+                                    latLng: geocodeResult.geometry.location
+                                },
+                                bubbles: true,
+                                composed: true
+                            }));
+                            console.log('Address Resolved');
+                            console.log(address);
+                            return resolve();
+                        })
+                        .catch((err) => {
+                            console.log('Address Failed');
+                            console.log(err);
+                            this._inputInvalid = true;
+                            this._addressProcessing = false;
+                            return resolve();
+                        });
+
+                });
+            }
+
+            _geocode(addressString) {
+                return new Promise((resolve, reject) => {
+                    const geocoder = new google.maps.Geocoder();
+                    const geocodeData = {
+                        address: addressString,
+                        componentRestrictions: {
+                            country: "US",
+                            postalCode: "07603"
+                        }
+                    };
+
+                    return geocoder.geocode(geocodeData, (results, status) => {
+                        if (status == 'OK') {
+                            if (results[0].formatted_address.startsWith('Bogota')) {
+                                //Show toast with no results
+                                this.$.toast.show({
+                                    text: 'Address Not Found',
+                                    duration: 3000
+                                });
+                                return reject();
+                            }
+                            return resolve(results[0]);
+                        }
+
+                        if (status == 'NO_RESULTS') {
+                            //Show toast with no results
+                            this.$.toast.show({
+                                text: 'Address Not Found',
+                                duration: 3000
+                            });
+                            return reject();
+                        }
+
+                        //Show toast for unknown error
+                        this.$.toast.show({
+                            text: 'Address Not Found',
+                            duration: 3000
+                        });
+                        return reject();
+                    });
+                });
+            }
+
+            _checkAddress(geocodePromise) {
+                return new Promise((resolve, reject) => {
+
+                    return geocodePromise
+                        .then((geocodeResult) => {
+                            let addressKey = geocodeResult.formatted_address;
+                            addressKey = addressKey.slice(0, addressKey.indexOf(','));
+                            addressKey = addressKey.replace(/\s+/g, '');
+
+                            return this.$.firebase.getStoredValue('addressesAdded/' + addressKey)
+                                .then((addressKeySnapshot) => {
+                                    if (Object.keys(addressKeySnapshot).length == 0) {
+                                        return resolve();
+                                    }
+
+                                    this.dispatchEvent(new CustomEvent('address-exists', {
+                                        bubbles: true,
+                                        composed: true
+                                    }));
+                                    return reject();
+
+                                })
+                                .catch(reject);
+                        })
+                        .catch(reject);
+
+                });
+            }
+
+            _onMapsApiLoad(evt) {
+                this._mapApiLoaded = true;
+            }
+
+            _handleGoogleApiDataResponse(evt) {
+                this._apiKey = evt.detail.response.apiKey;
+                this.importLazyGroup('google-map-api');
+            }
+
+            _handleGoogleApiDataError(evt) {
+                console.error(evt.detail.response);
+            }
+        }
+
+        window.customElements.define(GobandgoGarageSaleSignUpAddressPage.is,
+            GobandgoGarageSaleSignUpAddressPage);
+    </script>
+</dom-module>

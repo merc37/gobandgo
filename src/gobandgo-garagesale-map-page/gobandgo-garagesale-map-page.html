@@ -14,8 +14,7 @@
 
     <template>
         <style>
-
-            :host {
+             :host {
                 @apply --layout-vertical;
             }
 
@@ -24,49 +23,36 @@
             }
 
             #info-window-content {
-                 @apply --layout-vertical;
-             }
+                @apply --layout-vertical;
+            }
 
-             #info-window-image {
+            #info-window-image {
                 @apply --layout-flex;
-             }
+            }
 
-             #info-window-address {
+            #info-window-address {
                 @apply --layout-flex;
-             }
+            }
 
-             #info-window-message {
+            #info-window-message {
                 @apply --layout-flex;
-             }
+            }
 
             #spinner {
-                 position: absolute;
-                 --paper-spinner-color: var(--app-primary-color)
-             }
-
+                position: absolute;
+                --paper-spinner-color: var(--app-primary-color)
+            }
         </style>
 
-        <iron-ajax
-            auto
-            url="src/resources/json/google-api-data.json"
-            handle-as="json"
-            on-response="_handleGoogleApiDataResponse"
-            on-error="_handleGoogleApiDataError"
-        ></iron-ajax>
+        <iron-ajax auto url="resources/json/google-api-data.json" handle-as="json" on-response="_handleGoogleApiDataResponse" on-error="_handleGoogleApiDataError"></iron-ajax>
 
-        <firebase-query
-            app-name="[[firebaseAppName]]"
-            path="/markers"
-            order-by-child="paid"
-            equal-to="[[_equalTo]]"
-            data="{{_markerData}}"
-        ></firebase-query>
+        <firebase-query path="/markers" order-by-child="paid" equal-to="[[_equalTo]]" data="{{_markerData}}"></firebase-query>
 
-        <google-map id="map" api-key="[[_apiKey]]" latitude="40.876211" longitude="-74.029862" fit-to-markers
-            on-google-map-ready="_handleMapReady" language="[[language]]">
+        <google-map id="map" api-key="[[_apiKey]]" latitude="40.876211" longitude="-74.029862" fit-to-markers on-google-map-ready="_handleMapReady"
+            language="[[language]]">
             <template is="dom-repeat" items="{{_markerData}}">
-                <google-map-marker slot="markers" latitude="[[item.latitude]]" longitude="[[item.longitude]]"
-                    title="[[item.address]]" click-events on-google-map-marker-click="_handleMarkerClick" data="[[item]]">         
+                <google-map-marker slot="markers" latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.address]]" click-events
+                    on-google-map-marker-click="_handleMarkerClick" data="[[item]]">
                 </google-map-marker>
             </template>
         </google-map>
@@ -84,7 +70,6 @@
             static get properties() {
                 return {
                     language: String,
-                    firebaseAppName: String,
                     _markerData: Array,
                     _equalTo: {
                         type: String,
@@ -104,10 +89,10 @@
                     maxWidth: 300
                 });
                 this._infoWindow.setContent(
-                    '<div id="info-window-content">'+
-                        '<img id="info-window-image" src="' + marker.data.downloadURL+'"></img>' +
-                        '<div id="info-window-address">' + marker.data.address + '</div>' +
-                        '<div id="info-window-message">' + marker.data.message + '</div>' +
+                    '<div id="info-window-content">' +
+                    '<img id="info-window-image" src="' + marker.data.downloadURL + '"></img>' +
+                    '<div id="info-window-address">' + marker.data.address + '</div>' +
+                    '<div id="info-window-message">' + marker.data.message + '</div>' +
                     '</div>'
                 );
                 this._infoWindow.open(marker.map, marker.marker);

@@ -1,0 +1,190 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+
+<link rel="import" href="../paper-file-input/paper-file-input.html">
+
+<link rel="import" href="../bluebird/bluebird.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-database-script.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-storage-script.html">
+
+<dom-module id="gobandgo-garagesale-signup-marker-page">
+
+    <template>
+        <style>
+             :host {
+                @apply --layout-vertical;
+            }
+
+            #card-container {
+                @apply --layout-flex;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+
+            #progress-bar {
+                --paper-progress-active-color: var(--app-secondary-color);
+                --paper-progress-container-color: white;
+                width: 100%;
+            }
+
+            #spinner {
+                position: absolute;
+                --paper-spinner-color: var(--app-primary-color)
+            }
+        </style>
+
+        <div id="card-container">
+            <paper-card id="card" heading="Enter Info:">
+                <div class="card-content">
+                    <iron-form id="form" is="iron-form" on-iron-form-presubmit="_handleFormSubmit">
+                        <form>
+                            <paper-input autofocus id="firstNameInput" name="firstName" label="First Name" required error-message="Name Required"></paper-input>
+                            <paper-input id="lastNameInput" name="lastName" label="Last Name" required error-message="Name Required"></paper-input>
+                            <paper-input id="emailInput" name="email" label="Email" required error-message="Invalid Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"></paper-input>
+                            <paper-textarea id="messageInput" name="message" label="Message" auto-validate error-message="" maxlength="100" char-counter></paper-textarea>
+                            <paper-file-input id="fileInput" accept="image/png, image/jpeg">Pick A Photo</paper-file-input>
+                        </form>
+                    </iron-form>
+                </div>
+                <div class="card-actions">
+                    <paper-button id="submitButton " on-tap="_handleSubmit" disabled="[[_markerDataProcessing]]">Submit</paper-button>
+                </div>
+                <paper-progress id="progress-bar" indeterminate disabled="[[!_markerDataProcessing]]"></paper-progress>
+            </paper-card>
+        </div>
+
+        <iron-a11y-keys keys="enter" on-keys-pressed="_handleSubmit"></iron-a11y-keys>
+
+        <paper-toast id="toast" fit-into="[[_toastFitInto]]"></paper-toast>
+
+        <!-- <paper-spinner-lite id="spinner " active="[[!_mapApiLoaded]] "></paper-spinner-lite> -->
+
+    </template>
+
+    <script>
+        class GobandgoGarageSaleSignUpMarkerPage extends Polymer.Element {
+            static get is() {
+                return 'gobandgo-garagesale-signup-marker-page';
+            }
+
+            static get properties() {
+                return {
+                    addressData: Object,
+                    _markerDataProcessing: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _toastFitInto: {
+                        type: Object,
+                        computed: '_computeToastFitInto()'
+                    }
+                }
+            }
+
+            _computeToastFitInto() {
+                return this;
+            }
+
+            _handleSubmit(evt) {
+                this.$.form.submit();
+            }
+
+            _handleFormSubmit(evt) {
+                evt.preventDefault();
+
+                this._markerDataProcessing = true;
+
+                return this._submitMarker()
+                    .then(() => {
+                        console.log('FUll Resolce');
+                        this._markerDataProcessing = false;
+                        this.dispatchEvent(new CustomEvent('marker-submitted', {
+                            bubbles: true,
+                            composed: true
+                        }));
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        this._markerDataProcessing = false;
+                        this.$.toast.show({
+                            text: 'Internal Error',
+                            duration: 3000
+                        });
+                    });
+            }
+
+            _submitMarker() {
+                return new Promise((resolve, reject) => {
+
+                    const marker = this.$.form.serializeForm();
+                    console.log('submit start');
+                    console.log(this.addressData);
+                    marker.latitude = this.addressData.latLng.lat();
+                    marker.longitude = this.addressData.latLng.lng();
+                    marker.address = this.addressData.address;
+                    marker.message = marker.message || "Garage-Sale-like Items For Sale";
+                    marker.downloadUrl =
+                        'https://firebasestorage.googleapis.com/v0/b/gobandgo-1344.appspot.com/o/default%2FgarageSaleSign.png?alt=media&token=e83d55e2-6e35-4d92-9b0c-60f0f7e9d6c8';
+
+                    const firebaseDatabase = firebase.database();
+                    console.log(firebaseDatabase);
+                    console.log(marker);
+                    const markerKey = firebaseDatabase.ref('markers').push().key;
+                    const update = {};
+                    update['markers/' + markerKey] = marker;
+                    update['addressesAdded/' + marker.address.replace(/\s+/g, '')] = true;
+                    const pushMarkerPromise = firebaseDatabase.ref().update(update);
+                    const uploadPhotoPromise = this._uploadPhoto(markerKey);
+
+                    return uploadPhotoPromise
+                        .then(() => {
+                            console.log('photo resolve');
+                            return pushMarkerPromise
+                                .then(resolve)
+                                .catch(reject);
+                        })
+                        .catch(reject);
+
+
+                });
+            }
+
+            _uploadPhoto(markerKey) {
+                return new Promise((resolve, reject) => {
+
+                    const files = this.$.fileInput.files;
+
+                    if (!files || !files[0]) {
+                        console.log('no file');
+                        return resolve();
+                    }
+
+                    const photo = files[0];
+                    const firebaseStorage = firebase.storage();
+                    const firebaseStorageRef = firebaseStorage.ref(markerKey + '/' + photo.name);
+                    console.log(firebaseStorage);
+                    console.log(photo);
+
+                    firebaseStorageRef.put(photo)
+                        .then(resolve)
+                        .catch(reject);
+
+                });
+            }
+        }
+
+        window.customElements.define(GobandgoGarageSaleSignUpMarkerPage.is, GobandgoGarageSaleSignUpMarkerPage);
+    </script>
+</dom-module>

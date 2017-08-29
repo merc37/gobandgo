@@ -20,7 +20,7 @@
         --app-primary-color: #663399;
         --app-secondary-color: #D4AF37;
         @apply --layout-vertical;
-        @apply --layout-flex;
+        background-color: #d3d3d3;
       }
 
       #pages {
@@ -31,43 +31,21 @@
       .page {
         @apply --layout-flex;
       }
-
     </style>
 
-    <app-localstorage-document
-      data="{{_language}}"
-      key="language"
-    >
+    <app-localstorage-document data="{{_language}}" key="language">
     </app-localstorage-document>
 
-    <iron-ajax
-      auto
-      url="src/resources/json/firebase-data.json"
-      handle-as="json"
-      on-response="_handleFirebaseDataResponse"
-      on-error="_handleFirebaseDataError"
-    ></iron-ajax>
+    <iron-ajax auto url="resources/json/firebase-data.json" handle-as="json" on-response="_handleFirebaseDataResponse" on-error="_handleFirebaseDataError"></iron-ajax>
 
-    <iron-ajax
-      id="language-ajax"
-      auto
-      handle-as="json"
-      on-response="_handleLanguageDataResponse"
-      on-error="_handleLanguageDataError"
-    ></iron-ajax>
+    <iron-ajax id="language-ajax" auto handle-as="json" on-response="_handleLanguageDataResponse" on-error="_handleLanguageDataError"></iron-ajax>
 
-    <firebase-app
-      id="firebase-app"
-      name="[[_firebaseAppName]]"
-    ></firebase-app>
+    <firebase-app id="firebase-app"></firebase-app>
 
-    <firebase-auth
-      id="auth"
-      app-name="[[_firebaseAppName]]"
-    ></firebase-auth>
+    <firebase-auth id="auth"></firebase-auth>
 
     <gobandgo-animated-pages id="pages" selected="[[_page]]" attr-for-selected="name">
-      <gobandgo-stage name="stage" class="page" language="[[_language]]" locale="[[_locale]]" firebase-app-name="[[_firebaseAppName]]" on-language-change="_onLanguageChange"></gobandgo-stage>
+      <gobandgo-stage name="stage" class="page" language="[[_language]]" locale="[[_locale]]" on-language-change="_onLanguageChange"></gobandgo-stage>
       <gobandgo-loader name="loader" class="page" exit-animation="slide-up"></gobandgo-loader>
     </gobandgo-animated-pages>
 
@@ -85,11 +63,6 @@
           _page: {
             type: String,
             value: 'loader'
-          },
-          _firebaseAppName: {
-            type: String,
-            value: 'gobandgo-firebase',
-            readOnly: true
           },
           _language: {
             type: String,
@@ -109,7 +82,7 @@
         super.ready();
         this.importLazyGroup('iron-ajax');
         this.importLazyGroup('localstorage').then(() => {
-          if(!this._language) {
+          if (!this._language) {
             this._language = 'en';
           }
         });
@@ -122,23 +95,23 @@
 
       _updateLocale(newLang, oldLang) {
 
-        if(!newLang) {
+        if (!newLang) {
           return;
         }
 
-        if(newLang == oldLang) {
+        if (newLang == oldLang) {
           return;
         }
 
-        this.$['language-ajax'].url = 'src/resources/json/'+newLang+'.json';
+        this.$['language-ajax'].url = 'resources/json/' + newLang + '.json';
 
       }
 
       _handleSignIn() {
         this.$.auth.signInAnonymously()
-        .then(() => {
-          this._loadStage();
-        });
+          .then(() => {
+            this._loadStage();
+          });
       }
 
       _loadStage() {

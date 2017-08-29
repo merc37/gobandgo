@@ -37,7 +37,6 @@
   <link rel="lazy-import" href="../gobandgo-garagesale-signup-page/gobandgo-garagesale-signup-page.html" group="garagesale-signup-page">
   <link rel="lazy-import" href="../gobandgo-downloads-page/gobandgo-downloads-page.html" group="downloads-page">
 
-
   <template>
     <style>
        :host {
@@ -93,7 +92,7 @@
     <app-drawer-layout fullbleed>
 
       <!--Drawer-->
-      <app-drawer slot="drawer">
+      <app-drawer id="drawer" slot="drawer">
 
         <gobandgo-stage-drawer locale="[[locale]]" page="[[_page]]" on-drawer-menu-tap="_onDrawerMenuTap">
         </gobandgo-stage-drawer>
@@ -106,7 +105,9 @@
         <app-header fixed shadow slot="header">
           <app-toolbar id="header-toolbar">
             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
-            <div main-title spacer><div id="main-title">♫GoBandGo♫</div></div>
+            <div main-title spacer>
+              <div id="main-title">♫GoBandGo♫</div>
+            </div>
             <paper-menu-button horizontal-align="right">
               <paper-icon-button icon="icons:more-vert" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="[[language]]">
@@ -120,7 +121,8 @@
         <!--Main Content-->
         <gobandgo-animated-pages id="main-pages" selected="[[_page]]" attr-for-selected="name" role="main">
           <gobandgo-home-page name="home" class="page"></gobandgo-home-page>
-          <gobandgo-garagesale-map-page name="garagesale-map" class="page" language="[[language]]" firebase-app-name="[[firebaseAppName]]"></gobandgo-garagesale-map-page>
+          <gobandgo-garagesale-map-page name="garagesale-map" class="page" language="[[language]]"></gobandgo-garagesale-map-page>
+          <gobandgo-garagesale-signup-page name="garagesale-signup" class="page"></gobandgo-garagesale-signup-page>
 
           <gobandgo-loading-page name="loading" class="page"></gobandgo-loading-page>
         </gobandgo-animated-pages>
@@ -143,8 +145,7 @@
           _page: String,
           _route: Object,
           locale: Object,
-          language: String,
-          firebaseAppName: String
+          language: String
         }
       }
 
@@ -158,6 +159,7 @@
         if (newPage === undefined) {
           return;
         }
+
         newPage = newPage.split('/')[1];
 
         if (this._page == newPage) {
@@ -165,9 +167,12 @@
         }
 
         const page = newPage || 'home';
+        console.log(page);
         this._page = 'loading';
         this.importLazyGroup(page + '-page').then((results) => {
+          console.log(results);
           this._page = page;
+          console.log(this._page);
         });
       }
 
